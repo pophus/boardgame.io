@@ -562,6 +562,38 @@ export class _ClientImpl<
     this.transport.updateCredentials(credentials);
     this.notifySubscribers();
   }
+
+  /**
+   * Replay the game log up to a specific log index and override the game state.
+   * This is useful for stepping through game history or implementing replay functionality.
+   *
+   * Note: This method is primarily intended for use with the debug panel.
+   *
+   * @param logIndex - The index in the log to replay to. Use 0 to replay the first move,
+   *                   or the log length - 1 to replay all moves. Pass null to clear the
+   *                   override and return to the current state.
+   */
+  replayLog(logIndex: number | null): void {
+    if (logIndex === null) {
+      this.overrideGameState(null);
+      return;
+    }
+
+    let state = this.initialState;
+
+    for (let i = 0; i <= logIndex && i < this.log.length; i++) {
+      const { action, automatic } = this.log[i];
+      if (!automatic) {
+        state = this.reducer(state, action);
+      }
+    }
+
+    this.overrideGameState({
+      G: state.G,
+      ctx: state.ctx,
+      plugins: state.plugins,
+    });
+  }
 }
 
 /**

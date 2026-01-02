@@ -991,3 +991,52 @@ describe('start / stop', () => {
     expect(error).not.toHaveBeenCalled();
   });
 });
+
+describe('replayLog', () => {
+  let client: ReturnType<typeof Client>;
+
+  const game: Game = {
+    setup: () => ({ value: 0 }),
+    moves: {
+      increment: ({ G }) => ({ value: G.value + 1 }),
+      setValue: (_, value: number) => ({ value }),
+    },
+  };
+
+  beforeEach(() => {
+    client = Client({ game });
+  });
+
+  test('can replay log and override game state', () => {
+    // Make some moves
+    client.moves.increment(); // value = 1
+    client.moves.increment(); // value = 2
+    client.moves.setValue(10); // value = 10
+
+    // Replay to first move - state is now overridden
+    client.replayLog(0);
+    expect(client.getState().G).toEqual({ value: 1 });
+
+    // Replay to second move
+    client.replayLog(1);
+    expect(client.getState().G).toEqual({ value: 2 });
+
+    // Replay to third move
+    client.replayLog(2);
+    expect(client.getState().G).toEqual({ value: 10 });
+  });
+
+  test('replayLog with null clears the override', () => {
+    client.moves.increment(); // value = 1
+    client.moves.increment(); // value = 2
+    client.moves.increment(); // value = 3
+
+    // View historical state
+    client.replayLog(0);
+    expect(client.getState().G).toEqual({ value: 1 });
+
+    // Return to current
+    client.replayLog(null);
+    expect(client.getState().G).toEqual({ value: 3 });
+  });
+});
