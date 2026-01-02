@@ -6,6 +6,7 @@
   "scripts": {
     "prestart": "run-p examples:install build",
     "start": "run-p dev:server dev:client",
+    "prepare": "run-s build proxydirs",
     "predev": "npm run examples:install",
     "dev": "run-p build:watch dev:server dev:client",
     "dev:client": "node scripts/dev-client.js",
