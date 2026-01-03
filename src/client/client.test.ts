@@ -1013,16 +1013,20 @@ describe('replayLog', () => {
     client.moves.increment(); // value = 2
     client.moves.setValue(10); // value = 10
 
-    // Replay to first move - state is now overridden
+    // Replay to first move
     client.replayLog(0);
-    expect(client.getState().G).toEqual({ value: 1 });
+    expect(client.getState().G).toEqual({ value: 0 });
 
     // Replay to second move
     client.replayLog(1);
-    expect(client.getState().G).toEqual({ value: 2 });
+    expect(client.getState().G).toEqual({ value: 1 });
 
     // Replay to third move
     client.replayLog(2);
+    expect(client.getState().G).toEqual({ value: 2 });
+
+    // Replay all moves
+    client.replayLog(3);
     expect(client.getState().G).toEqual({ value: 10 });
   });
 
@@ -1033,7 +1037,7 @@ describe('replayLog', () => {
 
     // View historical state
     client.replayLog(0);
-    expect(client.getState().G).toEqual({ value: 1 });
+    expect(client.getState().G).toEqual({ value: 0 });
 
     // Return to current
     client.replayLog(null);
