@@ -569,9 +569,9 @@ export class _ClientImpl<
    *
    * Note: This method is primarily intended for use with the debug panel.
    *
-   * @param logIndex - The index in the log to replay to. Use 0 to replay the first move,
-   *                   or the log length - 1 to replay all moves. Pass null to clear the
-   *                   override and return to the current state.
+   * @param logIndex - The index in the log to replay up to. The move at logIndex is not replayed.
+   *                   Use 0 to replay the first move, or the log length to replay all moves.
+   *                   Use null to clear the override and return to the current state.
    */
   replayLog(logIndex: number | null): void {
     if (logIndex === null) {
@@ -581,7 +581,7 @@ export class _ClientImpl<
 
     let state = this.initialState;
 
-    for (let i = 0; i <= logIndex && i < this.log.length; i++) {
+    for (let i = 0; i < logIndex && i < this.log.length; i++) {
       const { action, automatic } = this.log[i];
       if (!automatic) {
         state = this.reducer(state, action);
