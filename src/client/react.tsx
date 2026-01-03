@@ -184,7 +184,7 @@ export function Client<
           matchData: this.client.matchData,
           sendChatMessage: this.client.sendChatMessage,
           chatMessages: this.client.chatMessages,
-          replayLog: this.client.replayLog,
+          replayLog: this.client.replayLog.bind(this.client),
         });
       }
 
