@@ -223,6 +223,7 @@ export class _ClientImpl<
       );
       this.store.dispatch(redo);
     };
+    this.replayLog = this.replayLog.bind(this);
 
     this.log = [];
 
